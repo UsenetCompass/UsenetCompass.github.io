@@ -169,6 +169,10 @@
       .each(cb);
   }
 
+  function extractNumber(currencyString) {
+    return Number(currencyString.replace(/[^0-9.-]+/g,""));
+  }
+
   const urls = ['normal.json', 'deals.json'];
   const promises = urls.map(url => fetch(url).then(response => response.json()));
 
@@ -199,7 +203,7 @@
         td[6].textContent = item['Size'];
         td[7].textContent = item['Price'];
         const size = Number(item['Size']);
-        const price = Number(item['Price']);
+        const price = Number(extractNumber(item['Price']));
         if ("Block".includes(item.Type) && !Number.isNaN(size) && !Number.isNaN(price)) {
           const pricePerTo = (price * 100000 / size) | 0;
           const residue = pricePerTo % 100;
