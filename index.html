@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>UsenetCompass</title>
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/datatables.net-se@2.1.0/css/dataTables.semanticui.min.css" rel="stylesheet">
+  <style type="text/css">
+    body>.ui.container {
+      margin-top: 3em;
+    }
+
+    iframe {
+      border: none;
+      width: calc(100% + 2em);
+      margin: 0em -1em;
+      height: 300px;
+    }
+
+    iframe html {
+      overflow: hidden;
+    }
+
+    iframe body {
+      padding: 0em;
+    }
+
+    .ui.container>h1 {
+      font-size: 3em;
+      text-align: center;
+      font-weight: normal;
+    }
+
+    .ui.container>h2.dividing.header {
+      font-size: 2em;
+      font-weight: normal;
+      margin: 4em 0em 3em;
+    }
+
+    .ui.table {
+      table-layout: fixed;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="main ui container">
+    <h1>UsenetCompass</h1>
+    <h2 class="ui dividing header">Comparator</h2>
+
+    <div class="ui toggle checkbox checked" id="deal-box">
+      <input type="checkbox" checked name="public" id="deal">
+      <label for="deal">Show deal?</label>
+    </div>
+
+    <table id="data-table" class="ui table">
+      <thead>
+        <tr>
+          <th>Offer</th>
+          <th>Provider</th>
+          <th>Type</th>
+          <th>Retention (days)</th>
+          <th>Speed (Mbit)</th>
+          <th>Connections</th>
+          <th>Size (GB)</th>
+          <th>Price</th>
+          <th>Price per To</th>
+          <th>Backbone</th>
+          <th>Remarks</th>
+          <th>Deals</th>
+        </tr>
+      </thead>
+      <tbody id="data-body">
+      </tbody>
+      <tfoot>
+        <tr>
+          <th>Offer</th>
+          <th>Provider</th>
+          <th>Type</th>
+          <th>Retention (days)</th>
+          <th>Speed (Mbit)</th>
+          <th>Connections</th>
+          <th>Size (GB)</th>
+          <th>Price</th>
+          <th>Price per To</th>
+          <th>Backbone</th>
+          <th>Remarks</th>
+          <th>Deals</th>
+        </tr>
+      </tfoot>
+    </table>
+
+    <template id="data-template">
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </template>
+
+  </div>
+</body>
+
+<footer class="ui vertical footer segment">
+  <div class="ui container">
+    <div class="ui right floated section horizontal link list">
+        <a class="item" href="https://usenetcompass.github.io">UsenetCompass</a>
+    </div>
+    <div class="ui section horizontal link list">
+      <a class="item" href="https://github.com/UsenetCompass/UsenetCompass.github.io" target="_blank">Free &amp;
+        Open Source (CC-BY-SA-4.0 license)</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/datatables.net@2.1.0/js/dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/datatables.net-se@2.1.0/js/dataTables.semanticui.min.js"></script>
+
+<script>
+
+  DataTable.ext.type.order['speed-pre'] = function (a) {
+    if (a === 'Unlimited') {
+      return Number.MAX_VALUE;
+    }
+    if (a === 'Variable') {
+      // Number.MAX_VALUE - 1 === Number.MAX_VALUE :'(
+      return 9e10;
+    }
+    return Number(a) || Number.MIN_VALUE;
+  };
+
+  function createSelect(column, searchOption) {
+    const select = document.createElement('select');
+    select.add(new Option(''));
+
+    // Apply listener for user change in value
+    select.addEventListener('change', function () {
+      column
+        .search(select.value, searchOption)
+        .draw();
+    });
+
+    return select;
+  }
+
+  function addListOptions(column, cb) {
+    column
+      .data()
+      .unique()
+      .sort()
+      .each(cb);
+  }
+
+  const urls = ['normal.json', 'deals.json'];
+  const promises = urls.map(url => fetch(url).then(response => response.json()));
+
+  Promise.all(promises)
+    .then(dataArrays => {
+      dataArray = dataArrays.flat();
+
+      const template = document.getElementById("data-template");
+      const tbody = document.getElementById("data-body");
+
+      dataArray.forEach(item => {
+
+        let clone = document.importNode(template.content, true);
+        let td = clone.querySelectorAll("td");
+
+        td[0].textContent = item.Offer;
+
+        let link = document.createElement("a");
+        link.href = item.URL;
+        link.textContent = item.Provider;
+        link.target = "_blank";
+        td[1].appendChild(link);
+
+        td[2].textContent = item.Type;
+        td[3].textContent = item['Retention'];
+        td[4].textContent = item['Speed'];
+        td[5].textContent = item.connections;
+        td[6].textContent = item['Size'];
+        td[7].textContent = item['Price'];
+        const size = Number(item['Size']);
+        const price = Number(item['Price']);
+        if ("Block".includes(item.Type) && !Number.isNaN(size) && !Number.isNaN(price)) {
+          const pricePerTo = (price * 100000 / size) | 0;
+          const residue = pricePerTo % 100;
+          const fixed = !residue ? 0 : residue % 10 ? 2 : 1;
+          td[8].textContent = (pricePerTo / 100).toFixed(fixed);
+        }
+        td[9].textContent = item.Backbone;
+        td[10].textContent = `${item['Deals'] === true ? '🏷️' : ''} ${item.Remarks}`;
+        td[11].textContent = item['Deals'] === true ? '1' : '0';
+
+        tbody.appendChild(clone);
+      });
+
+      new DataTable('#data-table', {
+        layout: {
+          topStart: document.getElementById('deal-box'),
+          topEnd: 'pageLength',
+          bottomStart: 'info',
+          bottomEnd: 'paging'
+        },
+        pageLength: 25,
+        orderable: [8],
+        order: [[7, 'asc']],
+        columnDefs: [
+          {
+            render: (data, type, row) => data + ' (' + row[9] + ')',
+            targets: 1
+          },
+          {
+            orderable: false,
+            targets: [0, 2, 9, 10]
+          },
+          {
+            type: 'speed',
+            targets: [4]
+          },
+          {
+            visible: false,
+            targets: [0, 9, 11]
+          }
+        ],
+
+        initComplete: function () {
+          this.api()
+            .columns([2])
+            .every(function () {
+              const select = createSelect(this, { exact: false });
+              this.footer().replaceChildren(select);
+
+              addListOptions(this, function (d, j) {
+                select.add(new Option(d));
+              });
+            });
+
+          this.api()
+            .columns([9])
+            .every(function () {
+              const select = createSelect(this, { caseInsensitive: true, exact: false, smart: true });
+              this.column(1).footer().replaceChildren(select);
+
+              addListOptions(this, function (d, j) {
+                if (!d.includes("&"))
+                  select.add(new Option(d));
+              });
+            });
+
+          this.api()
+            .columns([11])
+            .every(function () {
+              const deal = document.getElementById("deal");
+              const column = this;
+              const event = function () {
+                column
+                  .search(deal.checked ? '' : '0', { exact: false })
+                  .draw();
+              };
+              deal.addEventListener('click', event);
+              event();
+            });
+        },
+
+      });
+    })
+    .catch(error => console.error('Error fetching JSON:', error));
+
+</script>
+</body>
+
+</html>
