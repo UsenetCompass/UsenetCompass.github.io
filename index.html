@@ -147,9 +147,9 @@
     return Number(a) || Number.MIN_VALUE;
   };
 
-  function createSelect(column, searchOption) {
+  function createSelect(column, label, searchOption) {
     const select = document.createElement('select');
-    select.add(new Option(''));
+    select.add(new Option(label, ""));
 
     // Apply listener for user change in value
     select.addEventListener('change', function () {
@@ -243,10 +243,13 @@
         ],
 
         initComplete: function () {
+          const table = this;
           this.api()
             .columns([2])
             .every(function () {
-              const select = createSelect(this, { exact: false });
+              const column = this;
+              const columnHeader = table.api().column(column.index()).header().textContent;
+              const select = createSelect(this, columnHeader, { exact: false });
               this.footer().replaceChildren(select);
 
               addListOptions(this, function (d, j) {
@@ -257,7 +260,9 @@
           this.api()
             .columns([9])
             .every(function () {
-              const select = createSelect(this, { caseInsensitive: true, exact: false, smart: true });
+              const column = this;
+              const columnHeader = table.api().column(column.index()).header().textContent;
+              const select = createSelect(this, columnHeader, { caseInsensitive: true, exact: false, smart: true });
               this.column(1).footer().replaceChildren(select);
 
               addListOptions(this, function (d, j) {
