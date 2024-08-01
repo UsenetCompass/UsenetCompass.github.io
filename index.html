@@ -11,9 +11,9 @@
   <meta name="description" content="UsenetCompass – Compare Usenet Providers">
   <meta name="keywords" content="usenet,provider,compare,backbone,subscription,block,deals">
 
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
-  <link href="https://cdn.jsdelivr.net/npm/datatables.net-se@2.1.0/css/dataTables.semanticui.min.css" rel="stylesheet">
-  <style type="text/css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/datatables.net-se@2.1.0/css/dataTables.semanticui.min.css">
+  <style>
     body>.ui.container {
       margin-top: 3em;
     }
@@ -213,7 +213,7 @@
           td[8].textContent = (pricePerTo / 100).toFixed(fixed);
         }
         td[9].textContent = item.Backbone;
-        td[10].textContent = `${item['Deals'] === true ? '🏷️' : ''} ${item.Remarks}`;
+        td[10].innerHTML = `${item['Deals'] === true ? '<span title="It\'s a deal.">🏷️</span>' : ''} ${item.Remarks}`;
         td[11].textContent = item['Deals'] === true ? '1' : '0';
 
         tbody.appendChild(clone);
