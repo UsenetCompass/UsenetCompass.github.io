@@ -16,21 +16,34 @@
     "Deals": false,
     "Remarks": "Any remark",
     "URL": "http://localhost/"
-  }
+}
 ```
-In the JSON object above:
-- "Offer" is a string, its value is not show, it's not mandatory
-- "Provider" is a string, its value is the first column of the table
-- "Type" should have one of the two values: "Subscription"/"Block"
-- "Retention" is a mandatory number, in days
-- "Speed" is a string, it can contain the max speed in Mbit, or "Variable" or "Unlimited"
-- "Connections": 40,
-- "Size (GB)" is a string, in GB, in case of a Block it is its size
-- "Price" is a string, that contains its currency. In case it's a subscription, it's the annual price divided per 12
-- "Backbone" is a string, its value is in parenthesis in the first column of the table and it can be filtered by the select in the footer of the table
-- "Deals" is a boolean, if it's in the `normal.json`, should be false, else in the `deals.json` true
-- "Remarks" is a string
-- "URL" is a string, it can be the url of the offer or the url of the provider
+
+### Field Descriptions
+
+- Offer: (Optional) A string representing the name of the offer. Its value is not displayed and is not mandatory.
+
+- Provider: A string that corresponds to the first column of the associated table, indicating the service provider.
+
+- Type: A string that must be either "Subscription" or "Block", indicating the type of service offered.
+
+- Retention: A mandatory integer representing the retention period in days.
+
+- Speed: A string that can specify the maximum speed in Mbit, or can be "Variable" or "Unlimited".
+
+- Connections: An integer indicating the maximum number of simultaneous connections allowed.
+
+- Size (GB): A string representing the size in gigabytes (GB). For "Block" type offers, this indicates the total size.
+
+- Price: A string that includes the currency. For subscription types, this should represent the monthly price, calculated as the annual price divided by 12.
+
+- Backbone: A string that indicates the backbone provider, which is specified in parentheses in the first column of the table. This value can be filtered using the select option in the footer of the table.
+
+- Deals: A boolean value. If the offer is listed in `normal.json`, this should be false. If it is in `deals.json`, it should be true.
+
+- Remarks: A string for any additional comments or notes regarding the offer.
+
+- URL: A string that can either be the URL of the offer or the URL of the provider.
 
 ## How to help me
 
