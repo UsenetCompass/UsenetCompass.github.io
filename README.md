@@ -12,6 +12,7 @@
     "Connections": 10,
     "Size": "Unlimited",
     "Price": 5,
+    "Currency": "USD",
     "Backbone": "The Best",
     "Deals": false,
     "Remarks": "Any remark",
@@ -35,7 +36,9 @@
 
 - Size (GB): A string representing the size in gigabytes (GB). For "Block" type offers, this indicates the total size.
 
-- Price: A string that includes the currency. For subscription types, this should represent the monthly price, calculated as the annual price divided by 12.
+- Price: A string without the currency. For subscription types, this should represent the monthly price, calculated as the annual price divided by 12.
+
+- Currency: A string value that represents the price currency.
 
 - Backbone: A string that indicates the backbone provider, which is specified in parentheses in the first column of the table. This value can be filtered using the select option in the footer of the table.
 

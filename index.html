@@ -59,7 +59,7 @@
 
     <div class="ui toggle checkbox checked" id="deal-box">
       <input type="checkbox" checked name="public" id="deal">
-      <label for="deal">Show deal?</label>
+      <label for="deal">Show deal? <span title="It\'s a deal."><i class="tag icon yellow"></i></span></label>
     </div>
 
     <table id="data-table" class="ui table">
@@ -203,17 +203,23 @@
         td[4].textContent = item['Speed'];
         td[5].textContent = item['Connections'];
         td[6].textContent = item['Size'];
-        td[7].textContent = item['Price'];
-        const size = Number(item['Size']);
-        const price = Number(extractNumber(item['Price']));
-        if ("Block".includes(item.Type) && !Number.isNaN(size) && !Number.isNaN(price)) {
-          const pricePerTo = (price * 100000 / size) | 0;
-          const residue = pricePerTo % 100;
-          const fixed = !residue ? 0 : residue % 10 ? 2 : 1;
-          td[8].textContent = (pricePerTo / 100).toFixed(fixed);
+
+        const priceNumber = Number(item['Price']);
+        const currency = item['Currency'];
+        const priceCurrency = new Intl.NumberFormat(undefined, { style: 'currency', currency:  currency})
+          .format(priceNumber);
+        td[7].textContent = priceCurrency;
+
+        const sizeNumber = Number(item['Size']);
+        if ("Block".includes(item.Type) && !Number.isNaN(sizeNumber) && !Number.isNaN(priceNumber)) {
+          const pricePerTo = (priceNumber * 1000 / sizeNumber);
+          console.log(priceNumber, sizeNumber, pricePerTo);
+          const pricePerToCurrency = new Intl.NumberFormat(undefined, { style: 'currency', currency: currency })
+            .format(pricePerTo);
+          td[8].textContent = pricePerToCurrency;
         }
         td[9].textContent = item.Backbone;
-        td[10].innerHTML = `${item['Deals'] === true ? '<span title="It\'s a deal.">🏷️</span>' : ''} ${item.Remarks}`;
+        td[10].innerHTML = `${item['Deals'] === true ? '<span title="It\'s a deal."><i class="tag icon yellow"></i></span>' : ''} ${item.Remarks}`;
         td[11].textContent = item['Deals'] === true ? '1' : '0';
 
         tbody.appendChild(clone);
