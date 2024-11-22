@@ -171,8 +171,9 @@
       .each(cb);
   }
 
-  function extractNumber(currencyString) {
-    return Number(currencyString.replace(/[^0-9.-]+/g,""));
+  function addCurrencyToPrice(price, currency) {
+    return new Intl.NumberFormat(undefined, { style: 'currency', currency: currency })
+      .format(price);
   }
 
   const urls = ['normal.json', 'deals.json'];
@@ -206,17 +207,12 @@
 
         const priceNumber = Number(item['Price']);
         const currency = item['Currency'];
-        const priceCurrency = new Intl.NumberFormat(undefined, { style: 'currency', currency:  currency})
-          .format(priceNumber);
-        td[7].textContent = priceCurrency;
+        td[7].textContent = addCurrencyToPrice(priceNumber, currency);
 
         const sizeNumber = Number(item['Size']);
         if ("Block".includes(item.Type) && !Number.isNaN(sizeNumber) && !Number.isNaN(priceNumber)) {
           const pricePerTo = (priceNumber * 1000 / sizeNumber);
-          console.log(priceNumber, sizeNumber, pricePerTo);
-          const pricePerToCurrency = new Intl.NumberFormat(undefined, { style: 'currency', currency: currency })
-            .format(pricePerTo);
-          td[8].textContent = pricePerToCurrency;
+          td[8].textContent = addCurrencyToPrice(pricePerTo, currency);
         }
         td[9].textContent = item.Backbone;
         td[10].innerHTML = `${item['Deals'] === true ? '<span title="It\'s a deal."><i class="tag icon yellow"></i></span>' : ''} ${item.Remarks}`;
